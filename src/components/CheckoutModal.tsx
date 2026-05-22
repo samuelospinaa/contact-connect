@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 
+// Environment variable for Wompi public key (sandbox)
+const WOMPI_PUBLIC_KEY = import.meta.env.VITE_WOMPI_PUBLIC_KEY as string | undefined;
+
 export function CheckoutModal({
   open,
   onOpenChange,
@@ -20,12 +23,24 @@ export function CheckoutModal({
   const [formData, setFormData] = useState({ name: "", url: "", address: "" });
 
   const handlePay = () => {
-    setLoading(true);
-    // Simulate payment processing
-    setTimeout(() => {
-      setLoading(false);
-      setSuccess(true);
-    }, 2000);
+    if (!WOMPI_PUBLIC_KEY) {
+      console.warn("Wompi public key not set – using simulated flow");
+      // Simulated flow fallback
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        setSuccess(true);
+      }, 2000);
+      return;
+    }
+
+    // Build Wompi checkout URL (sandbox)
+    const amountCOP = 4900000; // €49 -> COP equivalent for demo (use fixed value)
+    const checkoutUrl = `https://checkout.wompi.co/publish?public_key=${encodeURIComponent(WOMPI_PUBLIC_KEY)}&currency=COP&amount=${amountCOP}&installments=1&reference=${encodeURIComponent(formData.name || "order")}&description=${encodeURIComponent(card?.name || "NFC Card")}`;
+    // Open checkout in new tab
+    window.open(checkoutUrl, "_blank");
+    // Assume payment success for demo after user returns (could add listener)
+    setSuccess(true);
   };
 
   const handleClose = (newOpen: boolean) => {
@@ -101,17 +116,17 @@ export function CheckoutModal({
             </div>
 
             <div className="flex flex-col gap-3">
-              <Button 
-                onClick={handlePay} 
-                disabled={loading || !formData.name || !formData.url || !formData.address}
-                className="w-full rounded-full h-12 text-md"
-              >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-                {loading ? "Processing..." : "Pay with Stripe (Simulated)"}
-              </Button>
-              <div className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1">
-                🔒 Secured by Stripe
-              </div>
+                <Button 
+                  onClick={handlePay} 
+                  disabled={loading || !formData.name || !formData.url || !formData.address}
+                  className="w-full rounded-full h-12 text-md"
+                >
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
+                  {loading ? "Processing..." : "Pay with Wompi (Simulated)"}
+                </Button>
+                <div className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1">
+                  🔒 Secured by Wompi
+                </div>
             </div>
           </>
         )}
