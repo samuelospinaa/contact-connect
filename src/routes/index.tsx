@@ -53,7 +53,7 @@ function Index() {
             </div>
           </motion.div>
 
-          <div className="relative h-[500px] lg:h-[600px]">
+          <div className="relative h-[500px] lg:h-[600px] flex items-center justify-center">
             <NFCCard />
             {/* Ambient glows */}
             <div className="absolute -z-10 inset-0 blur-3xl opacity-40 iridescent rounded-full" />
