@@ -64,7 +64,7 @@ function AIRecommender() {
       const generated = await getCardRecommendation(vibeInput);
       setCard(generated);
     } catch (err: any) {
-      setError(`Error de IA: ${err?.message || "Algo salió mal"}`);
+      setError(`AI Error: ${err?.message || "Something went wrong"}`);
     } finally {
       setLoading(false);
     }
@@ -136,7 +136,7 @@ function AIChatbot() {
       }
       return true;
     } catch (e: any) {
-      setMsgs((m) => [...m, { role: "b", text: `Error de inicialización: ${e?.message || "Error desconocido"}` }]);
+      setMsgs((m) => [...m, { role: "b", text: `Initialization error: ${e?.message || "Unknown error"}` }]);
       return false;
     }
   };
@@ -156,7 +156,7 @@ function AIChatbot() {
       setMsgs((m) => [...m, { role: "b", text }]);
     } catch (error: any) {
       console.error(error);
-      setMsgs((m) => [...m, { role: "b", text: `Error del modelo: ${error?.message || "Hubo un problema de conexión."}` }]);
+      setMsgs((m) => [...m, { role: "b", text: `Model error: ${error?.message || "There was a connection problem."}` }]);
     } finally {
       setLoading(false);
     }
@@ -183,7 +183,7 @@ function AIChatbot() {
         {loading && (
           <div className="flex justify-start">
             <div className="px-3 py-2 rounded-2xl text-sm bg-secondary flex items-center gap-2">
-              <Loader2 className="w-3 h-3 animate-spin" /> Escribiendo...
+              <Loader2 className="w-3 h-3 animate-spin" /> Typing...
             </div>
           </div>
         )}
